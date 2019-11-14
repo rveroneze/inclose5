@@ -17,4 +17,4 @@ To compile the program, run the file  './MakeFile.sh' in the directory containin
 
 
 ## Running
-To run the program, type './RInClose' and the arguments:
+To run the program, type './InClose5' and the arguments.
