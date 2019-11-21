@@ -17,4 +17,16 @@ To compile the program, run the file  './MakeFile.sh' in the directory containin
 
 
 ## Running
-To run the program, type './InClose5' and the arguments.
+To run the program, type './InClose5' and the arguments:
+
+1) Dataset's filename;
+
+2) minimum number of rows;
+
+3) minimum number of columns;
+
+4) Output filename for the list of biclusters;
+
+For instance:
+./InClose5 exampleDataset 2 1 exampleOutput.m
+
