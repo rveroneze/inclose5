@@ -73,12 +73,12 @@ void InClose(const dataset_t &D, const col_t &m, const row_t &minRow, const col_
 		}
 	}
 
-	// imprime o bicluster e elimina suas linhas da memoria
+	// Print the formal concept and deallocate the memory of its extent
 	if (bic->sizeB >= minCol)
 		printBic(bic, m);
 	delete[] bic->A;
 
-	// fechando os filhos
+	// Closing the children
 	while (!children.empty())
 	{
 		pbic_t child = children.front();
@@ -109,7 +109,7 @@ bool IsCanonical(const dataset_t &D, const col_t &y, const row_t &sizeRW, const 
 			for (i = 0; i < sizeRW; ++i)
 				if (!D[g_RW[i]][j])
 					break;
-			fcol = j; // se IsCanonical=F, eh usado para guardar a coluna de falha
+			fcol = j; // if IsCanonical==false, it is used to keep the column where the test fail
 			if (i == sizeRW)
 				return false;
 		}
