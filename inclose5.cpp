@@ -5,17 +5,22 @@
 
 bool readDataset(const string &dataSetName, dataset_t &matrix, row_t &n, col_t &m);
 void printData(const dataset_t &matrix, const row_t &n, const col_t &m);
+bool readClassLabels(const string &fileName, const row_t &n);
+
 
 int main(int argc, char* argv[])
 {
-	if (argc != 5)
+	if (argc < 5 || argc == 6 || argc == 7 || argc > 8)
 	{
 		cout << "\n!!! Wrong Arguments !!!" << endl << endl;
 		cout << "List of the arguments:" << endl;
 		cout << "1) Dataset's filename;" << endl;
 		cout << "2) minRow;" << endl;
 		cout << "3) minCol;" << endl;
-		cout << "4) Output filename for the list of biclusters (optional);" << endl;
+		cout << "4) Output filename for the list of biclusters;" << endl;
+		cout << "5) Class labels' filename (optional);" << endl;
+		cout << "6) Confidence [0,1] (when using class labels);" << endl;
+		cout << "7) Ignore biclusters with label x = ? (when using class labels);" << endl;
 		exit(1);
 	}
 
@@ -32,6 +37,12 @@ int main(int argc, char* argv[])
 	cout << "minRow: " << minRow << endl;
 	cout << "minCol: " << minCol << endl;
 	cout << "File with the list of bicluster: " << argv[4] << endl;
+	if (argc > 5)
+	{
+		cout << "Class labels' filename: " << argv[5] << endl;
+		cout << "Confidence: " << argv[6] << endl;
+		cout << "Ignore biclusters with label x = "  << argv[7] << endl;
+	}
 
 	if (!readDataset(argv[1], matrix, n, m))
 	{
@@ -39,8 +50,22 @@ int main(int argc, char* argv[])
 		exit(1);
 	}
 	printf("\nDataset loaded: %dx%d\n\n", n, m);
-
 	//printData(matrix, n, m);
+
+	if (argc > 5)
+	{
+		// Le as classes dos objetos
+		g_classes = new unsigned short[n];
+		if (!readClassLabels(argv[5], n))
+		{
+			cout << "\nClass labels' file was not loaded!";
+			exit(1);
+		}
+		printf("Class labels loaded\n\n");
+		
+		g_minConf = atof(argv[6]);
+		g_ignoreLabel = atoi(argv[7]);
+	}
 
 	openPrintFile(argv[4]);
 	cout << "\nRunning..." << endl;
@@ -102,4 +127,31 @@ void printData(const dataset_t &matrix, const row_t &n, const col_t &m)
 			cout << matrix[i][j] << '\t';
 		cout << endl;
 	}
+}
+
+bool readClassLabels(const string &fileName, const row_t &n)
+{
+	// Read tha class label of each object, and
+	// set g_maxLabel
+
+	g_maxLabel = 0;
+
+	ifstream myStream;
+	myStream.open(fileName, ifstream::in);
+
+	if (!myStream.is_open())
+		return false;
+
+	//Storing the data
+	myStream.seekg(0);
+	for (row_t i = 0; i < n; ++i)
+	{
+		myStream >> g_classes[i];
+		if (g_classes[i] > g_maxLabel) g_maxLabel = g_classes[i];
+	}
+
+	myStream.close();
+	++g_maxLabel;
+
+	return true;
 }

@@ -4,3 +4,10 @@
 row_t *g_RW;  // // vector to store the extent of a possible formal concept
 unsigned g_cont = 0; // number of biclusters in the output
 ofstream g_filebics; // pointer to the output file
+
+// ----- Variables for the search using class labels -----
+unsigned short *g_classes; // vector to store the class label of each object
+unsigned short g_maxLabel; // maximum label
+double g_minConf = 0; // confidence threshold
+unsigned short g_ignoreLabel; // biclusters that represents label g_ignoreLabel will not be outputted
+// -------------------------------------------------------

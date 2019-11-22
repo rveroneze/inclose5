@@ -6,3 +6,4 @@
 void openPrintFile(const string &filename);
 void printBic(const pbic_t &bic, const col_t m);
 void closePrintFile();
+double getMinConf(row_t *A, row_t size);
