@@ -10,7 +10,7 @@ bool readClassLabels(const string &fileName, const row_t &n);
 
 int main(int argc, char* argv[])
 {
-	if (argc < 5 || argc == 6 || argc > 7)
+	if (argc != 7)
 	{
 		cout << "\n!!! Wrong Arguments !!!" << endl << endl;
 		cout << "List of the arguments:" << endl;
@@ -18,8 +18,8 @@ int main(int argc, char* argv[])
 		cout << "2) minRow;" << endl;
 		cout << "3) minCol;" << endl;
 		cout << "4) Output filename for the list of biclusters;" << endl;
-		cout << "5) Class labels' filename (optional);" << endl;
-		cout << "6) Minimum ZDC value [0,1] (when using class labels);" << endl;
+		cout << "5) Class labels' filename;" << endl;
+		cout << "6) Minimum ZDC value [0,1];" << endl;
 		exit(1);
 	}
 
@@ -36,11 +36,8 @@ int main(int argc, char* argv[])
 	cout << "minRow: " << minRow << endl;
 	cout << "minCol: " << minCol << endl;
 	cout << "File with the list of bicluster: " << argv[4] << endl;
-	if (argc > 5)
-	{
-		cout << "Class labels' filename: " << argv[5] << endl;
-		cout << "Minimum ZDC: " << argv[6] << endl;
-	}
+	cout << "Class labels' filename: " << argv[5] << endl;
+	cout << "Minimum ZDC: " << argv[6] << endl;
 
 	if (!readDataset(argv[1], matrix, n, m))
 	{
@@ -50,19 +47,15 @@ int main(int argc, char* argv[])
 	printf("\nDataset loaded: %dx%d\n\n", n, m);
 	//printData(matrix, n, m);
 
-	if (argc > 5)
+	// Le as classes dos objetos
+	g_classes = new unsigned short[n];
+	if (!readClassLabels(argv[5], n))
 	{
-		// Le as classes dos objetos
-		g_classes = new unsigned short[n];
-		if (!readClassLabels(argv[5], n))
-		{
-			cout << "\nClass labels' file was not loaded!";
-			exit(1);
-		}
-		printf("Class labels loaded\n\n");
-		
-		g_minZDC = atof(argv[6]);
+		cout << "\nClass labels' file was not loaded!";
+		exit(1);
 	}
+	printf("Class labels loaded\n\n");
+	g_minZDC = atof(argv[6]);
 
 	openPrintFile(argv[4]);
 	cout << "\nRunning..." << endl;
@@ -70,7 +63,8 @@ int main(int argc, char* argv[])
 	closePrintFile();
 
 	cout << "\nRuntime = " << tempo << endl;
-	cout << "Number of biclusters = " << g_cont << endl;
+	cout << "Number of biclusters in the output = " << g_cont << endl;
+	cout << "Number of discarded biclusters = " << g_contFails << endl;
 
 	return 0;
 }

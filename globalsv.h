@@ -12,4 +12,5 @@ extern unsigned short g_maxLabel;
 extern double g_minZDC;
 extern unsigned short *g_contClassGeral;
 extern unsigned short *g_contClassBic;
+extern unsigned g_contFails;
 // -------------------------------------------------------

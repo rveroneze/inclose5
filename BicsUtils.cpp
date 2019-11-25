@@ -8,8 +8,11 @@ void openPrintFile(const string &filename)
 
 void printBic(const pbic_t &bic, const col_t m, const row_t &n)
 {
-	if (g_minZDC > 0 && getZDC(bic->A, bic->sizeA, n, 'a') < g_minZDC)
+	if (getZDC(bic->A, bic->sizeA, n, 'a') < g_minZDC)
+	{
+		++g_contFails;
 		return;
+	}
 
 	++g_cont;
 	g_filebics << "A{" << g_cont << "} = [";
@@ -51,6 +54,8 @@ option = 'a' => actual value
 		if (zdc > maior) maior = zdc;
 	}
 	
+	cout << option << " " << maior << endl;
+
 	return maior;
 }
 
@@ -72,5 +77,5 @@ double chi_squared (const row_t &p, const row_t &n, const row_t &pt, const row_t
     if (p3d != 0) p3 = p3n / p3d;    
     if (p4d != 0) p4 = p4n / p4d;
 
-    return p1 + p2 + p3 + p4;
+    return (p1 + p2 + p3 + p4) / t;
 }

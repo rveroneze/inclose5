@@ -49,7 +49,7 @@ void InClose(const dataset_t &D, const col_t &m, const row_t &minRow, const col_
 			}
 
 			// "Main routine"
-			if (sizeRW >= minRow && getZDC(g_RW, sizeRW, m, 'u') >= g_minZDC)
+			if (sizeRW >= minRow && getZDC(g_RW, sizeRW, n, 'u') >= g_minZDC)
 			{
 				col_t fcol;
 				if (sizeRW == bic->sizeA)
