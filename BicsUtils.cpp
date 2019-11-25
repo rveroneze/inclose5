@@ -8,7 +8,7 @@ void openPrintFile(const string &filename)
 
 void printBic(const pbic_t &bic, const col_t m, const row_t &n)
 {
-	if (getZDC(bic->A, bic->sizeA, n, 'a') < g_minZDC)
+	if (getZDC(bic->A, bic->sizeA, n, 'a', m) < g_minZDC)
 	{
 		++g_contFails;
 		return;
@@ -32,21 +32,33 @@ void closePrintFile()
 	g_filebics.close();
 }
 
-double getZDC(const row_t *A, const row_t &sizeA, const row_t &n, const char &option)
+double getZDC(const row_t *A, const row_t &sizeA, const row_t &n, const char &option, const col_t &col)
 {
 /*
 option = 'u' => upper bound
 option = 'a' => actual value
 */
-	for (unsigned short i = 0; i < g_maxLabel; ++i) g_contClassBic[i] = 0; // initialize vector
-	for (row_t i = 0; i < sizeA; ++i) ++g_contClassBic[ g_classes[A[i]] ]; // counting the representativeness of each class label
+	for (unsigned short i = 0; i < g_maxLabel; ++i)
+	{
+		g_contClassBic[i] = 0; // initialize vector
+		g_contClassBicUn[i] = 0; // initialize vector
+	}
+	row_t nUn = 0;
+	for (row_t i = 0; i < sizeA; ++i) {
+		++g_contClassBic[ g_classes[A[i]] ]; // counting the representativeness of each class label
+		if (option == 'u' && col >= g_unav[A[i]])
+		{
+			++g_contClassBicUn[ g_classes[A[i]] ];
+			++nUn;
+		}
+	}
 	
 	double maior = 0, zdc;
 	for (unsigned short i = 0; i < g_maxLabel; ++i)
 	{
 		row_t ib, ob, ig, og;
 		ib = g_contClassBic[i]; // number of samples of label i in the bicluster
-		if (option == 'u') ob = 0;
+		if (option == 'u') ob = nUn - g_contClassBicUn[i];
 		else ob = sizeA - g_contClassBic[i];
 		ig = g_contClassGeral[i];  // number of samples of label i in the dataset
 		og = n - g_contClassGeral[i];

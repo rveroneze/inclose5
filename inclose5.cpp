@@ -149,6 +149,7 @@ bool readClassLabels(const string &fileName, const row_t &n)
 	for (unsigned short i = 0; i < g_maxLabel; ++i) g_contClassGeral[i] = 0; // initialize vector
 	for (row_t i = 0; i < n; ++i) ++g_contClassGeral[ g_classes[i] ]; // counting the representativeness of each class label
 	g_contClassBic = new unsigned short[g_maxLabel];
+	g_contClassBicUn = new unsigned short[g_maxLabel];
 
 	return true;
 }

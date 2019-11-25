@@ -6,6 +6,15 @@ float runInClose(const dataset_t &D, const row_t &n, const col_t &m, const row_t
 	clock_t clocks = clock();
 	g_RW = new row_t[n];
 
+	// Creating the vector g_unav
+	g_unav = new col_t[n];
+	for (row_t i = 0; i < n; ++i)
+	{
+		col_t j;
+		for (j = m; j > 0 && D[i][j-1]; --j);
+		g_unav[i] = j;
+	}
+
 	// Creating the supremum
 	pbic_t bic = new bic_t;
 	bic->A = new row_t[n];
@@ -49,7 +58,7 @@ void InClose(const dataset_t &D, const col_t &m, const row_t &minRow, const col_
 			}
 
 			// "Main routine"
-			if (sizeRW >= minRow && getZDC(g_RW, sizeRW, n, 'u') >= g_minZDC)
+			if (sizeRW >= minRow && getZDC(g_RW, sizeRW, n, 'u', j) >= g_minZDC)
 			{
 				col_t fcol;
 				if (sizeRW == bic->sizeA)
