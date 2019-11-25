@@ -10,7 +10,7 @@ bool readClassLabels(const string &fileName, const row_t &n);
 
 int main(int argc, char* argv[])
 {
-	if (argc < 5 || argc == 6 || argc == 7 || argc > 8)
+	if (argc < 5 || argc == 6 || argc > 7)
 	{
 		cout << "\n!!! Wrong Arguments !!!" << endl << endl;
 		cout << "List of the arguments:" << endl;
@@ -20,7 +20,6 @@ int main(int argc, char* argv[])
 		cout << "4) Output filename for the list of biclusters;" << endl;
 		cout << "5) Class labels' filename (optional);" << endl;
 		cout << "6) Confidence [0,1] (when using class labels);" << endl;
-		cout << "7) Ignore biclusters with label x = ? (when using class labels);" << endl;
 		exit(1);
 	}
 
@@ -41,7 +40,6 @@ int main(int argc, char* argv[])
 	{
 		cout << "Class labels' filename: " << argv[5] << endl;
 		cout << "Confidence: " << argv[6] << endl;
-		cout << "Ignore biclusters with label x = "  << argv[7] << endl;
 	}
 
 	if (!readDataset(argv[1], matrix, n, m))
@@ -64,7 +62,6 @@ int main(int argc, char* argv[])
 		printf("Class labels loaded\n\n");
 		
 		g_minConf = atof(argv[6]);
-		g_ignoreLabel = atoi(argv[7]);
 	}
 
 	openPrintFile(argv[4]);

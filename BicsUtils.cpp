@@ -36,16 +36,11 @@ double getMinConf(row_t *A, row_t size)
 	for (unsigned short i = 0; i < g_maxLabel; ++i) g_contClassBic[i] = 0; // initialize vector
 	for (row_t i = 0; i < size; ++i) ++g_contClassBic[ g_classes[A[i]] ]; // counting the representativeness of each class label
 	
-	unsigned int maior = 0, label = 0;
+	unsigned int maior = 0;
 	for (unsigned short i = 0; i < g_maxLabel; ++i)
 	{
-		if (g_contClassBic[i] > maior)
-		{
-			maior = g_contClassBic[i];
-			label = i;
-		}
+		if (g_contClassBic[i] > maior) maior = g_contClassBic[i];
 	}
 
-	if (g_ignoreLabel == label) return 0;
 	return maior / (double) size;
 }
