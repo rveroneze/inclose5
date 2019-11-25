@@ -10,4 +10,5 @@ unsigned short *g_classes; // vector to store the class label of each object
 unsigned short g_maxLabel; // maximum label
 double g_minConf = 0; // confidence threshold
 unsigned short g_ignoreLabel; // biclusters that represents label g_ignoreLabel will not be outputted
+unsigned short *g_contClassBic; // stores the number of samples of each class label in a bicluster
 // -------------------------------------------------------

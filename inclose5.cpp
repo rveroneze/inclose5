@@ -132,7 +132,7 @@ void printData(const dataset_t &matrix, const row_t &n, const col_t &m)
 bool readClassLabels(const string &fileName, const row_t &n)
 {
 	// Read tha class label of each object, and
-	// set g_maxLabel
+	// set g_maxLabel, and allocate g_contClassBic
 
 	g_maxLabel = 0;
 
@@ -152,6 +152,8 @@ bool readClassLabels(const string &fileName, const row_t &n)
 
 	myStream.close();
 	++g_maxLabel;
+
+	g_contClassBic = new unsigned short[g_maxLabel];
 
 	return true;
 }
