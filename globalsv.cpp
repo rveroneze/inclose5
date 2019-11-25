@@ -9,7 +9,6 @@ ofstream g_filebics; // pointer to the output file
 unsigned short *g_classes; // vector to store the class label of each object
 unsigned short g_maxLabel; // maximum label
 double g_minZDC = 0; // threshold of the ZDC measure
-unsigned short g_ignoreLabel; // biclusters that represents label g_ignoreLabel will not be outputted
 unsigned short *g_contClassGeral; // stores the number of samples of each class label
 unsigned short *g_contClassBic; // stores the number of samples of each class label in a bicluster
 // -------------------------------------------------------
