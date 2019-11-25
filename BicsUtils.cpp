@@ -53,8 +53,6 @@ option = 'a' => actual value
 		zdc = chi_squared(ib, ob, ig, og);
 		if (zdc > maior) maior = zdc;
 	}
-	
-	cout << option << " " << maior << endl;
 
 	return maior;
 }
