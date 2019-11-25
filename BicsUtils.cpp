@@ -6,9 +6,9 @@ void openPrintFile(const string &filename)
 	g_filebics.open(filename);
 }
 
-void printBic(const pbic_t &bic, const col_t m)
+void printBic(const pbic_t &bic, const col_t m, const row_t &n)
 {
-	if (g_minConf > 0 && getMinConf(bic->A, bic->sizeA) < g_minConf)
+	if (g_minZDC > 0 && getZDC(bic->A, bic->sizeA, n, 'a') < g_minZDC)
 		return;
 
 	++g_cont;
@@ -29,17 +29,25 @@ void closePrintFile()
 	g_filebics.close();
 }
 
-double getZDCUpperBound(const row_t *A, const row_t &sizeA, const row_t &n)
+double getZDC(const row_t *A, const row_t &sizeA, const row_t &n, const char &option)
 {
+/*
+option = 'u' => upper bound
+option = 'a' => actual value
+*/
 	for (unsigned short i = 0; i < g_maxLabel; ++i) g_contClassBic[i] = 0; // initialize vector
 	for (row_t i = 0; i < sizeA; ++i) ++g_contClassBic[ g_classes[A[i]] ]; // counting the representativeness of each class label
 	
-	double maior = 0;
+	double maior = 0, zdc;
 	for (unsigned short i = 0; i < g_maxLabel; ++i)
 	{
-		if (g_ignoreLabel == i) continue;
-
-		double zdc = chi_squared(g_contClassBic[i], sizeA - g_contClassBic[i], g_contClassGeral[i], n - g_contClassGeral[i]);
+		row_t ib, ob, ig, og;
+		ib = g_contClassBic[i]; // number of samples of label i in the bicluster
+		if (option == 'u') ob = 0;
+		else ob = sizeA - g_contClassBic[i];
+		ig = g_contClassGeral[i];  // number of samples of label i in the dataset
+		og = n - g_contClassGeral[i];
+		zdc = chi_squared(ib, ob, ig, og);
 		if (zdc > maior) maior = zdc;
 	}
 	

@@ -22,13 +22,13 @@ float runInClose(const dataset_t &D, const row_t &n, const col_t &m, const row_t
 	bic->sizeB = 0;
 	bic->col = 0;
 
-	InClose(D, m, minRow, minCol, bic); // call In-Close
+	InClose(D, m, minRow, minCol, bic, n); // call In-Close
 
 	clocks = clock() - clocks;
 	return ((float)clocks) / CLOCKS_PER_SEC;
 }
 
-void InClose(const dataset_t &D, const col_t &m, const row_t &minRow, const col_t &minCol, const pbic_t &bic)
+void InClose(const dataset_t &D, const col_t &m, const row_t &minRow, const col_t &minCol, const pbic_t &bic, const col_t &n)
 {
 	queue<pbic_t> children;
 
@@ -49,7 +49,7 @@ void InClose(const dataset_t &D, const col_t &m, const row_t &minRow, const col_
 			}
 
 			// "Main routine"
-			if (sizeRW >= minRow)
+			if (sizeRW >= minRow && getZDC(g_RW, sizeRW, m, 'u') >= g_minZDC)
 			{
 				col_t fcol;
 				if (sizeRW == bic->sizeA)
@@ -75,7 +75,7 @@ void InClose(const dataset_t &D, const col_t &m, const row_t &minRow, const col_
 
 	// Print the formal concept and deallocate the memory of its extent
 	if (bic->sizeB >= minCol)
-		printBic(bic, m);
+		printBic(bic, m, n);
 	delete[] bic->A;
 
 	// Closing the children
@@ -91,7 +91,7 @@ void InClose(const dataset_t &D, const col_t &m, const row_t &minRow, const col_
 		}
 		child->B[child->col - 1] = true;
 		child->sizeB = bic->sizeB + 1;
-		InClose(D, m, minRow, minCol, child);
+		InClose(D, m, minRow, minCol, child, n);
 		children.pop();
 	}
 	delete[] bic->B;
