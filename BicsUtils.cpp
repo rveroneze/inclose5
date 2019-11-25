@@ -29,27 +29,40 @@ void closePrintFile()
 	g_filebics.close();
 }
 
-double getMinConf(row_t *A, row_t size)
+double getZDCUpperBound(const row_t *A, const row_t &sizeA, const row_t &n)
 {
-// Compute the confidence of a formal concept
-
-	unsigned int *contClass = new unsigned int[g_maxLabel];
-	for (unsigned short i = 0; i < g_maxLabel; ++i) contClass[i] = 0; // initialize vector
-
-	for (row_t i = 0; i < size; ++i) ++contClass[ g_classes[A[i]] ]; // counting the representativeness of each class label
+	for (unsigned short i = 0; i < g_maxLabel; ++i) g_contClassBic[i] = 0; // initialize vector
+	for (row_t i = 0; i < sizeA; ++i) ++g_contClassBic[ g_classes[A[i]] ]; // counting the representativeness of each class label
 	
-	unsigned int maior = 0, label = 0;
+	double maior = 0;
 	for (unsigned short i = 0; i < g_maxLabel; ++i)
 	{
-		if (contClass[i] > maior)
-		{
-			maior = contClass[i];
-			label = i;
-		}
+		if (g_ignoreLabel == i) continue;
+
+		double zdc = chi_squared(g_contClassBic[i], sizeA - g_contClassBic[i], g_contClassGeral[i], n - g_contClassGeral[i]);
+		if (zdc > maior) maior = zdc;
 	}
+	
+	return maior;
+}
 
-	delete [] contClass;
+double chi_squared (const row_t &p, const row_t &n, const row_t &pt, const row_t &nt)
+{
+    double t = nt + pt;
+    double p1n = pow(p-((p+n)/t)*pt, 2);
+    double p1d = (p+n)/t*pt;
+    double p2n = pow(n-((p+n)/t)*nt, 2);
+    double p2d = (p+n)/t*nt;
+    double p3n = pow(pt-p-(t-(p+n))/t*pt, 2);
+    double p3d = (t-(p+n))/t*pt;
+    double p4n = pow(nt-n-(t-(p+n))/t*nt,2);
+    double p4d = (t-(p+n))/t*nt;
+	double p1 = 0, p2 = 0, p3 = 0, p4 = 0;
+    
+    if (p1d != 0) p1 = p1n / p1d;
+    if (p2d != 0) p2 = p2n / p2d;
+    if (p3d != 0) p3 = p3n / p3d;    
+    if (p4d != 0) p4 = p4n / p4d;
 
-	if (g_ignoreLabel == label) return 0;
-	return maior / (double) size;
+    return p1 + p2 + p3 + p4;
 }

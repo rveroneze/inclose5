@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 		cout << "3) minCol;" << endl;
 		cout << "4) Output filename for the list of biclusters;" << endl;
 		cout << "5) Class labels' filename (optional);" << endl;
-		cout << "6) Confidence [0,1] (when using class labels);" << endl;
+		cout << "6) Minimum ZDC value [0,1] (when using class labels);" << endl;
 		cout << "7) Ignore biclusters with label x = ? (when using class labels);" << endl;
 		exit(1);
 	}
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 		}
 		printf("Class labels loaded\n\n");
 		
-		g_minConf = atof(argv[6]);
+		g_minZDC = atof(argv[6]);
 		g_ignoreLabel = atoi(argv[7]);
 	}
 
@@ -132,7 +132,7 @@ void printData(const dataset_t &matrix, const row_t &n, const col_t &m)
 bool readClassLabels(const string &fileName, const row_t &n)
 {
 	// Read tha class label of each object, and
-	// set g_maxLabel
+	// set g_maxLabel, and g_contClassGeral, and allocate g_contClassBic
 
 	g_maxLabel = 0;
 
@@ -152,6 +152,12 @@ bool readClassLabels(const string &fileName, const row_t &n)
 
 	myStream.close();
 	++g_maxLabel;
+
+
+	g_contClassGeral = new unsigned short[g_maxLabel];
+	for (unsigned short i = 0; i < g_maxLabel; ++i) g_contClassGeral[i] = 0; // initialize vector
+	for (row_t i = 0; i < n; ++i) ++g_contClassGeral[ g_classes[i] ]; // counting the representativeness of each class label
+	g_contClassBic = new unsigned short[g_maxLabel];
 
 	return true;
 }
