@@ -27,6 +27,9 @@ To run the program, type './InClose5' and the arguments:
 
 4) Output filename for the list of biclusters;
 
-For instance:
-./InClose5 exampleDataset 2 1 exampleOutput.m
+5) Class labels' filename;
 
+6) Minimum ZDC value [0,1];
+
+For instance:
+./InClose5 exampleDataset 2 1 exampleOutput.m exampleLabels 0.95
