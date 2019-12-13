@@ -49,27 +49,30 @@ void InClose(const dataset_t &D, const col_t &m, const row_t &minRow, const col_
 			}
 
 			// "Main routine"
-			if (sizeRW >= minRow && getZDC(g_RW, sizeRW, n, 'u') >= g_minZDC)
+			if (sizeRW == bic->sizeA)
 			{
-				col_t fcol;
-				if (sizeRW == bic->sizeA)
-				{
-					bic->B[j] = true;
-					++bic->sizeB;
-				}
-				else if (IsCanonical(D, j, sizeRW, bic, fcol))
-				{
-					pbic_t child = new bic_t;
-					child->sizeA = sizeRW;
-					child->A = new row_t[sizeRW];
-					for (row_t i = 0; i < sizeRW; ++i)
-						child->A[i] = g_RW[i];
-					child->col = j + 1;
-					children.push(child);
-				}
-				else if (fcol < bic->col) bic->Z[j] = true;
+				bic->B[j] = true;
+				++bic->sizeB;
 			}
-			else bic->Z[j] = true;
+			else
+			{
+				if (sizeRW >= minRow && getZDC(g_RW, sizeRW, n, 'u') >= g_minZDC)
+				{
+					col_t fcol;
+					if (IsCanonical(D, j, sizeRW, bic, fcol))
+					{
+						pbic_t child = new bic_t;
+						child->sizeA = sizeRW;
+						child->A = new row_t[sizeRW];
+						for (row_t i = 0; i < sizeRW; ++i)
+							child->A[i] = g_RW[i];
+						child->col = j + 1;
+						children.push(child);
+					}
+					else if (fcol < bic->col) bic->Z[j] = true;
+				}
+				else bic->Z[j] = true;
+			}			
 		}
 	}
 
