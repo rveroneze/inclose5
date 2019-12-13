@@ -8,7 +8,8 @@ void openPrintFile(const string &filename)
 
 void printBic(const pbic_t &bic, const col_t m, const row_t &n)
 {
-	if (getZDC(bic->A, bic->sizeA, n, 'a', m) < g_minZDC)
+	pair <double,double> zdc = getZDC(bic->A, bic->sizeA, n, 'a', m);
+	if (zdc.first < g_minZDC)
 	{
 		++g_contFails;
 		return;
@@ -32,7 +33,7 @@ void closePrintFile()
 	g_filebics.close();
 }
 
-double getZDC(const row_t *A, const row_t &sizeA, const row_t &n, const char &option, const col_t &col)
+pair <double,double> getZDC(const row_t *A, const row_t &sizeA, const row_t &n, const char &option, const col_t &col)
 {
 /*
 option = 'u' => upper bound
@@ -53,17 +54,30 @@ option = 'a' => actual value
 		}
 	}
 	
-	double maior = 0, zdc;
+	double zdc;
+	pair <double,double> maior;
+	maior.first = 0;
+	maior.second = 0;
 	for (unsigned short i = 0; i < g_maxLabel; ++i)
 	{
 		row_t ib, ob, ig, og;
 		ib = g_contClassBic[i]; // number of samples of label i in the bicluster
-		if (option == 'u') ob = nUn - g_contClassBicUn[i];
-		else ob = sizeA - g_contClassBic[i];
 		ig = g_contClassGeral[i];  // number of samples of label i in the dataset
 		og = n - g_contClassGeral[i];
-		zdc = chi_squared(ib, ob, ig, og);
-		if (zdc > maior) maior = zdc;
+		if (option == 'u')
+		{
+			ob = nUn - g_contClassBicUn[i];
+			zdc = chi_squared(ib, ob, ig, og);
+			if (zdc > maior.first) maior.first = zdc;
+			zdc = chi_squared(ib, 0, ig, og);
+			if (zdc > maior.second) maior.second = zdc;
+		}
+		else
+		{
+			ob = sizeA - g_contClassBic[i];
+			zdc = chi_squared(ib, ob, ig, og);
+			if (zdc > maior.first) maior.first = zdc;
+		}
 	}
 
 	return maior;
