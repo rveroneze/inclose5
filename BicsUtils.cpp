@@ -66,18 +66,16 @@ option = 'a' => actual value
 		og = n - g_contClassGeral[i];
 		if (option == 'u')
 		{
-			ob = nUn - g_contClassBicUn[i];
-			zdc = chi_squared(ib, ob, ig, og);
-			if (zdc > maior.first) maior.first = zdc;
 			zdc = chi_squared(ib, 0, ig, og);
 			if (zdc > maior.second) maior.second = zdc;
+			ob = nUn - g_contClassBicUn[i];
 		}
 		else
 		{
 			ob = sizeA - g_contClassBic[i];
-			zdc = chi_squared(ib, ob, ig, og);
-			if (zdc > maior.first) maior.first = zdc;
 		}
+		zdc = chi_squared(ib, ob, ig, og);
+		if (zdc > maior.first) maior.first = zdc;
 	}
 
 	return maior;
