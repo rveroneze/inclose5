@@ -10,7 +10,7 @@ extern ofstream g_filebics;
 extern unsigned short *g_classes;
 extern unsigned short g_maxLabel;
 extern double g_minZDC;
-extern unsigned short *g_contClassGeral;
-extern unsigned short *g_contClassBic;
+extern row_t *g_contClassGeral;
+extern row_t *g_contClassBic;
 extern unsigned g_contFails;
 // -------------------------------------------------------
