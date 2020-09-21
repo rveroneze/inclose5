@@ -28,7 +28,7 @@ float runInClose(const dataset_t &D, const row_t &n, const col_t &m, const row_t
 	return ((float)clocks) / CLOCKS_PER_SEC;
 }
 
-void InClose(const dataset_t &D, const col_t &m, const row_t &minRow, const col_t &minCol, const pbic_t &bic, const col_t &n)
+void InClose(const dataset_t &D, const col_t &m, const row_t &minRow, const col_t &minCol, const pbic_t &bic, const row_t &n)
 {
 	queue<pbic_t> children;
 
