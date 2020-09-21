@@ -24,7 +24,7 @@ using namespace std;
 typedef bool data_t;
 typedef data_t** dataset_t;
 
-typedef unsigned short row_t;
+typedef unsigned row_t;
 typedef unsigned short col_t;
 
 struct bic_t {
