@@ -37,13 +37,7 @@ double getZDC(const row_t *A, const row_t &sizeA, const row_t &n)
 	for (unsigned short i = 0; i < g_maxLabel; ++i) g_contClassBic[i] = 0; // initialize vector
 	for (row_t i = 0; i < sizeA; ++i) ++g_contClassBic[ g_classes[A[i]] ]; // counting the representativeness of each class label
 	
-	double maior = 0, zdc;
-	for (unsigned short i = 0; i < g_maxLabel; ++i)
-	{
-		zdc = chi_squared(sizeA, n);
-		if (zdc > maior) maior = zdc;
-	}
-	return maior;
+	return chi_squared(sizeA, n);
 }
 
 double chi_squared (const row_t &sizeA, const row_t &n)
