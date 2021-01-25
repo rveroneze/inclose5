@@ -47,10 +47,11 @@ double chi_squared (const row_t &sizeA, const row_t &n)
 	double soma = 0, Ei1, Ei2;
 	for (unsigned short i = 0; i < g_maxLabel; ++i)
 	{
-		Ei1 = sizeA * g_contClassGeral[i] / n;
+		Ei1 = sizeA * g_contClassGeral[i] / (double) n;
 		if (Ei1 != 0) soma = soma + pow(g_contClassBic[i] - Ei1, 2) / Ei1;
-		Ei2 = nout * g_contClassGeral[i] / n;
+		Ei2 = nout * g_contClassGeral[i] / (double) n;
 		if (Ei2 != 0) soma = soma + pow(g_contClassGeral[i] - g_contClassBic[i] - Ei2, 2) / Ei2;
 	}
+
 	return soma / n;
 }
