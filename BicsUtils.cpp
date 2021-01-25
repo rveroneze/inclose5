@@ -8,7 +8,7 @@ void openPrintFile(const string &filename)
 
 void printBic(const pbic_t &bic, const col_t &m, const row_t &n)
 {
-	if (getZDC(bic->A, bic->sizeA, n) < g_minZDC)
+	if (g_minZDC > 0 && getZDC(bic->A, bic->sizeA, n) < g_minZDC)
 	{
 		++g_contFails;
 		return;
@@ -36,7 +36,7 @@ double getZDC(const row_t *A, const row_t &sizeA, const row_t &n)
 {
 	for (unsigned short i = 0; i < g_maxLabel; ++i) g_contClassBic[i] = 0; // initialize vector
 	for (row_t i = 0; i < sizeA; ++i) ++g_contClassBic[ g_classes[A[i]] ]; // counting the representativeness of each class label
-	
+
 	return chi_squared(sizeA, n);
 }
 
@@ -52,5 +52,5 @@ double chi_squared (const row_t &sizeA, const row_t &n)
 		Ei2 = nout * g_contClassGeral[i] / n;
 		if (Ei2 != 0) soma = soma + pow(g_contClassGeral[i] - g_contClassBic[i] - Ei2, 2) / Ei2;
 	}
-	return soma;
+	return soma / n;
 }
