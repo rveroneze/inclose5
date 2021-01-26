@@ -8,11 +8,14 @@ void openPrintFile(const string &filename)
 
 void printBic(const pbic_t &bic, const col_t m, const row_t &n)
 {
-	pair <double,double> zdc = getZDC(bic->A, bic->sizeA, n, 'a', m);
-	if (zdc.first < g_minZDC)
+	if (g_minZDC > 0)
 	{
-		++g_contFails;
-		return;
+		pair <double,double> zdc = getZDC(bic->A, bic->sizeA, n, 'a', m);
+		if (zdc.first < g_minZDC)
+		{
+			++g_contFails;
+			return;
+		}
 	}
 
 	++g_cont;
@@ -33,71 +36,76 @@ void closePrintFile()
 	g_filebics.close();
 }
 
-pair <double,double> getZDC(const row_t *A, const row_t &sizeA, const row_t &n, const char &option, const col_t &col)
-{
+
 /*
 option = 'u' => upper bound
 option = 'a' => actual value
 */
+pair <double,double> getZDC(const row_t *A, const row_t &sizeA, const row_t &n, const char &option, const col_t &col)
+{
+	row_t *contClassBic = new row_t[g_maxLabel], *contClassBicUn = new row_t[g_maxLabel], *contClassBicAux = new row_t[g_maxLabel];
+
+	// initialize vectors
 	for (unsigned short i = 0; i < g_maxLabel; ++i)
 	{
-		g_contClassBic[i] = 0; // initialize vector
-		g_contClassBicUn[i] = 0; // initialize vector
+		contClassBic[i] = 0;
+		contClassBicUn[i] = 0;
+		contClassBicAux[i] = 0;
 	}
+	
+	// counting the representativeness of each class label
 	row_t nUn = 0;
-	for (row_t i = 0; i < sizeA; ++i) {
-		++g_contClassBic[ g_classes[A[i]] ]; // counting the representativeness of each class label
+	for (row_t i = 0; i < sizeA; ++i)
+	{
+		++contClassBic[ g_classes[A[i]] ];
 		if (option == 'u' && col >= g_unav[A[i]])
 		{
-			++g_contClassBicUn[ g_classes[A[i]] ];
+			++contClassBicUn[ g_classes[A[i]] ];
 			++nUn;
 		}
 	}
 	
-	double zdc;
 	pair <double,double> maior;
 	maior.first = 0;
 	maior.second = 0;
-	for (unsigned short i = 0; i < g_maxLabel; ++i)
+	if (option == 'u')
 	{
-		row_t ib, ob, ig, og;
-		ib = g_contClassBic[i]; // number of samples of label i in the bicluster
-		ig = g_contClassGeral[i];  // number of samples of label i in the dataset
-		og = n - g_contClassGeral[i];
-		if (option == 'u')
+		for (unsigned short i = 0; i < g_maxLabel; ++i)
 		{
-			zdc = chi_squared(ib, 0, ig, og);
+			contClassBicAux[i] = contClassBic[i];
+			double zdc = chi_squared(contClassBicAux, contClassBicAux[i], n);
+			contClassBicAux[i] = 0;
 			if (zdc > maior.second) maior.second = zdc;
-			ob = nUn - g_contClassBicUn[i];
+
+			row_t aux = contClassBicUn[i];
+			contClassBicUn[i] = contClassBic[i];
+			zdc = chi_squared(contClassBicUn, nUn - aux + contClassBic[i], n);
+			contClassBicUn[i] = aux;
+			if (zdc > maior.first) maior.first = zdc;
 		}
-		else
-		{
-			ob = sizeA - g_contClassBic[i];
-		}
-		zdc = chi_squared(ib, ob, ig, og);
-		if (zdc > maior.first) maior.first = zdc;
+		maior.first = maior.second;
 	}
+	else maior.first = chi_squared(contClassBic, sizeA, n);
+
+	delete [] contClassBic;
+	delete [] contClassBicUn;
+	delete [] contClassBicAux;
 
 	return maior;
 }
 
-double chi_squared (const row_t &p, const row_t &n, const row_t &pt, const row_t &nt)
+double chi_squared (const row_t *contClassBic, const row_t &sizeA, const row_t &n)
 {
-    double t = nt + pt;
-    double p1n = pow(p-((p+n)/t)*pt, 2);
-    double p1d = (p+n)/t*pt;
-    double p2n = pow(n-((p+n)/t)*nt, 2);
-    double p2d = (p+n)/t*nt;
-    double p3n = pow(pt-p-(t-(p+n))/t*pt, 2);
-    double p3d = (t-(p+n))/t*pt;
-    double p4n = pow(nt-n-(t-(p+n))/t*nt,2);
-    double p4d = (t-(p+n))/t*nt;
-	double p1 = 0, p2 = 0, p3 = 0, p4 = 0;
-    
-    if (p1d != 0) p1 = p1n / p1d;
-    if (p2d != 0) p2 = p2n / p2d;
-    if (p3d != 0) p3 = p3n / p3d;    
-    if (p4d != 0) p4 = p4n / p4d;
+	row_t nout = n - sizeA;
 
-    return (p1 + p2 + p3 + p4) / t;
+	double soma = 0, Ei1, Ei2;
+	for (unsigned short i = 0; i < g_maxLabel; ++i)
+	{
+		Ei1 = sizeA * g_contClassGeral[i] / (double) n;
+		if (Ei1 != 0) soma = soma + pow(contClassBic[i] - Ei1, 2) / Ei1;
+		Ei2 = nout * g_contClassGeral[i] / (double) n;
+		if (Ei2 != 0) soma = soma + pow(g_contClassGeral[i] - contClassBic[i] - Ei2, 2) / Ei2;
+	}
+
+	return soma / n;
 }

@@ -11,8 +11,6 @@ extern unsigned short *g_classes;
 extern unsigned short g_maxLabel;
 extern double g_minZDC;
 extern row_t *g_contClassGeral;
-extern row_t *g_contClassBic;
-extern row_t *g_contClassBicUn;
 extern unsigned g_contFails;
 extern col_t *g_unav;
 // -------------------------------------------------------
