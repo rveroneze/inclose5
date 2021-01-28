@@ -38,13 +38,14 @@ option = 'a' => actual value
 */
 double getZDC(const row_t *A, const row_t &sizeA, const row_t &n, const char &option)
 {
-	row_t *contClassBic = new row_t[g_maxLabel], *contClassBicAux = new row_t[g_maxLabel];
+	row_t *contClassBic = new row_t[g_maxLabel];
+	// row_t *contClassBicAux = new row_t[g_maxLabel];
 
 	// initialize vectors
 	for (unsigned short i = 0; i < g_maxLabel; ++i) 
 	{
 		contClassBic[i] = 0;
-		contClassBicAux[i] = 0; // used for upper bound computation
+		//contClassBicAux[i] = 0; // used for upper bound computation
 	}
 
 	// counting the representativeness of each class label
@@ -55,16 +56,17 @@ double getZDC(const row_t *A, const row_t &sizeA, const row_t &n, const char &op
 	{
 		for (unsigned short i = 0; i < g_maxLabel; ++i)
 		{
-			contClassBicAux[i] = contClassBic[i];
+			/*contClassBicAux[i] = contClassBic[i];
 			double zdc = chi_squared(contClassBicAux, contClassBicAux[i], n);
-			contClassBicAux[i] = 0;
+			contClassBicAux[i] = 0;*/
+			double zdc = ((n - g_contClassGeral[i]) * (contClassBic[i] / (double)g_contClassGeral[i]) * n) / (n - contClassBic[i]);
 			if (zdc > maior) maior = zdc;
 		}
 	}
 	else maior = chi_squared(contClassBic, sizeA, n);
 
 	delete [] contClassBic;
-	delete [] contClassBicAux;
+	// delete [] contClassBicAux;
 
 	return maior;
 }
