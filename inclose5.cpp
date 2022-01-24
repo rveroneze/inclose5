@@ -6,11 +6,12 @@
 bool readDataset(const string &dataSetName, dataset_t &matrix, row_t &n, col_t &m);
 void printData(const dataset_t &matrix, const row_t &n, const col_t &m);
 bool readClassLabels(const string &fileName, const row_t &n);
+bool readConfigFile();
 
 
 int main(int argc, char* argv[])
 {
-	if (argc < 5 || argc == 6 || argc > 7)
+	if (argc < 5 || argc == 7 || argc > 8)
 	{
 		cout << "\n!!! Wrong Arguments !!!" << endl << endl;
 		cout << "List of the arguments:" << endl;
@@ -20,7 +21,15 @@ int main(int argc, char* argv[])
 		cout << "4) Output filename for the list of biclusters;" << endl;
 		cout << "5) Class labels' filename (optional);" << endl;
 		cout << "6) Confidence [0,1] (when using class labels);" << endl;
+		cout << "7) Ignore biclusters with label x = ? (when using class labels);" << endl;
 		exit(1);
+	}
+
+	if (!readConfigFile())
+	{
+		cout << "\nConfiguration file was not loaded.\n";
+		cout << "Default configuration:" << endl;
+		cout << "Output format (1 - matlab; 2 - python): " << g_output << endl;
 	}
 
 	dataset_t matrix; // pointer to the dataset
@@ -40,6 +49,7 @@ int main(int argc, char* argv[])
 	{
 		cout << "Class labels' filename: " << argv[5] << endl;
 		cout << "Confidence: " << argv[6] << endl;
+		cout << "Ignore biclusters with label x = "  << argv[7] << endl;
 	}
 
 	if (!readDataset(argv[1], matrix, n, m))
@@ -62,6 +72,7 @@ int main(int argc, char* argv[])
 		printf("Class labels loaded\n\n");
 		
 		g_minConf = atof(argv[6]);
+		g_ignoreLabel = atoi(argv[7]);
 	}
 
 	openPrintFile(argv[4]);
@@ -152,5 +163,42 @@ bool readClassLabels(const string &fileName, const row_t &n)
 
 	g_contClassBic = new unsigned short[g_maxLabel];
 
+	return true;
+}
+
+bool readConfigFile()
+{
+	unordered_map<string,string> params;
+	ifstream myStream;
+	string line;
+
+	myStream.open("config.txt", ifstream::in);
+
+	if (!myStream.is_open())
+		return false;
+		
+
+	myStream.seekg(0);
+	while (myStream.good())
+	{
+		getline(myStream, line);
+		size_t found = line.find("=");
+		if (found!=string::npos)
+		{
+			params[line.substr(0,found)] = line.substr(found+1);
+		}
+	}
+
+	cout << "myparams contains:" << endl;
+	for (auto& x: params)
+		cout << x.first << ": " << x.second << endl;
+	
+	// Setando as variaveis com os parametros
+	if (params["OUT"].compare("matlab") == 0)
+		g_output = 1;
+	else
+		g_output = 2;
+
+	myStream.close();
 	return true;
 }

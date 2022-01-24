@@ -4,6 +4,11 @@
 void openPrintFile(const string &filename)
 {
 	g_filebics.open(filename);
+	if (g_output == 2) // python
+	{
+		g_filebics << "#!/usr/bin/env python3" << endl << endl;
+		g_filebics << "bics = []" << endl;
+	}
 }
 
 void printBic(const pbic_t &bic, const col_t m)
@@ -12,16 +17,31 @@ void printBic(const pbic_t &bic, const col_t m)
 		return;
 
 	++g_cont;
-	g_filebics << "A{" << g_cont << "} = [";
-	for (row_t i = 0; i < bic->sizeA; ++i)
-		g_filebics << bic->A[i] + 1 << " ";
-	g_filebics << "];\nB{" << g_cont << "} = [";
-	for (col_t i = 0; i < m; ++i)
+	if (g_output == 1) // matlab
 	{
-		if (bic->B[i])
-			g_filebics << i + 1 << " ";
+		g_filebics << "A{" << g_cont << "} = [";
+		for (row_t i = 0; i < bic->sizeA; ++i)
+			g_filebics << bic->A[i] + 1 << " ";
+		g_filebics << "];\nB{" << g_cont << "} = [";
+		for (col_t i = 0; i < m; ++i)
+		{
+			if (bic->B[i])
+				g_filebics << i + 1 << " ";
+		}
+		g_filebics << "];\n";
 	}
-	g_filebics << "];\n";
+	else // python
+	{
+		g_filebics << "bics.append([[";
+		for (row_t i = 0; i < bic->sizeA; ++i)
+			g_filebics << bic->A[i] << ",";
+		g_filebics << "],[";
+		for (col_t i = 0; i < m; ++i)
+		{
+			if (bic->B[i]) g_filebics << i << ",";
+		}
+		g_filebics << "]])" << endl;
+	}
 }
 
 void closePrintFile()
@@ -36,11 +56,16 @@ double getMinConf(row_t *A, row_t size)
 	for (unsigned short i = 0; i < g_maxLabel; ++i) g_contClassBic[i] = 0; // initialize vector
 	for (row_t i = 0; i < size; ++i) ++g_contClassBic[ g_classes[A[i]] ]; // counting the representativeness of each class label
 	
-	unsigned int maior = 0;
+	unsigned int maior = 0, label = 0;
 	for (unsigned short i = 0; i < g_maxLabel; ++i)
 	{
-		if (g_contClassBic[i] > maior) maior = g_contClassBic[i];
+		if (g_contClassBic[i] > maior)
+		{
+			maior = g_contClassBic[i];
+			label = i;
+		}
 	}
 
+	if (g_ignoreLabel == label) return 0;
 	return maior / (double) size;
 }

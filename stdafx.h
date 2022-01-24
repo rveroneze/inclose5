@@ -17,6 +17,7 @@
 #include <time.h>
 #include <algorithm>
 #include <queue>
+#include <unordered_map>  // usado para o arquivo config.txt
 
 using namespace std;
 
