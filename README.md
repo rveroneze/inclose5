@@ -12,6 +12,9 @@ Related works:
 - Andrews, S. (2009). In-close, a fast algorithm for computing formal concepts.
 
 
+## === Experimental branch for feature testing ===
+
+
 ## Compiling
 To compile the program, run the file  './MakeFile.sh' in the directory containing the source files.
 
@@ -27,6 +30,16 @@ To run the program, type './InClose5' and the arguments:
 
 4) Output filename for the list of biclusters;
 
+5) Class labels' filename (optional);
+
+6) Confidence [0,1] (when using class labels);
+
+7) Ignore biclusters with label x = ? (when using class labels);
+
+
 For instance:
 ./InClose5 exampleDataset 2 1 exampleOutput.m
 
+
+### Note:
+The code in this branch performs the same operations as the master branch, but offers an additional supervised filtering step on the output. This filter evaluates each pattern (formal concept) based on the confidence of its best possible classification rule, X → c, where X is the pattern and c is the class label that yields the highest confidence for X among all class labels. Only patterns meeting this confidence criterion are retained.
