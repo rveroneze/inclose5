@@ -12,6 +12,9 @@ Related works:
 - Andrews, S. (2009). In-close, a fast algorithm for computing formal concepts.
 
 
+## === Experimental branch for feature testing ===
+
+
 ## Compiling
 To compile the program, run the file  './MakeFile.sh' in the directory containing the source files.
 
@@ -33,3 +36,13 @@ To run the program, type './InClose5' and the arguments:
 
 For instance:
 ./InClose5 exampleDataset 2 1 exampleOutput.m exampleLabels 0.95
+
+### Note:
+The code in this branch performs the same operations as the master branch, but with an additional supervised filtering step on the output. This filter evaluates each pattern (formal concept) based on the χ2 test, which is a zero diagonal convex (ZDC) function. Only patterns meeting the minimum χ2 threshold are retained.
+
+The χ2 test implementation is based on the paper:
+- Nijssen, S., & Kok, J. N. (2005, October). Multi-class correlated pattern mining. In International Workshop on Knowledge Discovery in Inductive Databases (pp. 165-187). Berlin, Heidelberg: Springer Berlin Heidelberg.
+
+In this paper, the authors state: "As for a database of size N the highest achievable χ2 value is N, we will choose χ2 thresholds which are percentages of N." 
+
+Following this approach, we divide the χ2 statistic by N.
