@@ -12,6 +12,9 @@ Related works:
 - Andrews, S. (2009). In-close, a fast algorithm for computing formal concepts.
 
 
+## === Experimental branch for feature testing ===
+
+
 ## Compiling
 To compile the program, run the file  './MakeFile.sh' in the directory containing the source files.
 
@@ -34,3 +37,9 @@ To run the program, type './InClose5' and the arguments:
 For instance:
 ./InClose5 exampleDataset 2 1 exampleOutput.m exampleLabels 0.95
 
+
+### Note:
+This branch extends the functionality of the supervised_ZDC branch by implementing the upper bound of the Zero Diagonal Convex (ZDC) function, as proposed in:
+- Guns, T., Nijssen, S., & De Raedt, L. (2011). Itemset mining: A constraint programming perspective. Artificial Intelligence, 175(12-13), 1951-1983.
+
+The implemented ZDC function is the χ² test.
